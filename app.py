@@ -48,6 +48,13 @@ def embed_repo():
     
     data = request.get_json()
     repo_url = data['repo_url']
+    pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+    pinecone_index = pc.Index("codebase-rag-api")
+
+    # Describe index stats to check for existing namespaces
+    index_stats = pinecone_index.describe_index_stats()
+    if repo_url in index_stats['namespaces']:
+        return Response("Namespace already exists. Skipping embedding process.", status=200)
     
     def clone_repo(repo_url):
         repo_name = repo_url.split("/")[-1]
@@ -93,10 +100,6 @@ def embed_repo():
     path = f"./content/{clone_repo(repo_url)}"
     # repo_dir_path = f"./content/{path}"
     file_content = get_main_file_content(path)
-    
-    pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-    pinecone_index = pc.Index("codebase-rag-api")
-    vectorstore = PineconeVectorStore(index_name="codebase-rag-api", embedding=HuggingFaceEmbeddings())
     
     documents = []
     
