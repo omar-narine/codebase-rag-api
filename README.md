@@ -1,78 +1,53 @@
-# Codebase Retrieval API
-=====================================
+# Codebase RAG API
 
-A robust API for retrieving codebase information and embeddings for software development and research.
+## Project Overview
 
-## Overview
------------
+This is a server-side API that integrates with the Pinecone vector store and the OpenAI API to enable remote code reviews and provide augmentative query responses for developers working on a codebase.
 
-This API is designed to index and query large codebases for software development, debugging, and research purposes. It utilizes PineCone for vector store operations and OpenAI's LLM for context-aware retrieval. The API provides endpoints for:
+## Functionality
 
-1. Repository Indexing (Embed-repo): Indexes a given GitHub repository, retrieves code snippet embeddings, and stores them in a PineCone vector store.
-2. Query Resolution (Query): Performs context-aware retrieval using a given query and a repository index, providing relevant code snippets and augmenting the query for more accurate results.
+This API has two primary endpoints:
 
-## API Endpoints
------------------
+### /embed-repo
 
-### Embed-repo Endpoint
+* Clones a GitHub repository
+* Processes its contents using Hugging Face embeddings
+* Stores it in the Pinecone vector store for efficient similarity searches
 
-The embed-repo endpoint POSTs a GitHub repository URL to embed-repo, clones the repository, extracts relevant code snippets, and stores their embeddings in PineCone.
+### /query
 
-* URL: `/embed-repo/`
-* Request Body: A JSON object with a single key-value pair containing the GitHub repository URL (`repo_url`).
-* Response: A JSON response indicating successful repository cloning and embed-store operations.
+* Takes a query as input
+* Generates an augmented prompt for the query
+* Sends it to the OpenAI API for a response
+* Provides an informative response to assist with code reviews or answer developer questions about the codebase
 
-### Query Endpoint
+## Key Features
 
-The query endpoint makes a GET request to retrieve code snippet information using a given query and a repository index.
+* Codebase Processing: The API clones a GitHub repository, extracts relevant files, and processes its contents using Hugging Face embeddings.
+* Pinecone Vector Store: The API uses Pinecone as a vector store to enable efficient similarity searches across the codebase.
+* OpenAI Integration: The API leverages the OpenAI API to provide augmentative query responses for developers working on the codebase.
+* Augmented Prompts: The API generates custom prompts for the OpenAI API based on the query, leveraging the context of the codebase.
 
-* URL: `/query/`
-* Request Body: A JSON object with two key-value pairs containing the OpenAI query (`query`), the repository URL or index name (`repo_url`).
-* Response: A JSON response with the LLM-generated augmented query, the retrieved code snippet information, and a success message.
+## Technical Details
 
-## Integrating with the Codebase Retrieval API
----------------------------------------------
+This API is built using Flask as the web framework and utilizes various libraries, including:
 
-### Repository Indexing
+* Flask: For creating the web API
+* Pinecone: For vector storage and similarity search
+* OpenAI API: For augmentative query responses
+* Hugging Face: For embeddings and input processing
+* Sentence Transformers: For sentence embeddings
 
-1. Clone the repository using the embed-repo endpoint.
-2. Extract the repository information and code snippet embeddings using the query endpoint.
-3. Integrate with your preferred LLM for further querying and response generation.
+## Getting Started
 
-## Contributing
---------------
+To run this API, ensure you have the following dependencies installed:
 
-Contributions to this project are encouraged! Feel free to share your improvements, test cases, or even research ideas on our [Contributing Guidelines](Contributing-Guidelines).
+* Flask
+* Pinecone
+* OpenAI API
+* Hugging Face
+* Sentence Transformers
 
-## Running the API
--------------------
+You'll also need to set the environment variables PINECONE_API_KEY and GROQ_API_KEY with your respective API keys.
 
-1. Clone this repository.
-2. Import necessary dependencies: `pip install requirements.txt`
-3. Set environment variables (e.g., `GROQ_API_KEY`, `PINECONE_API_KEY`, etc.).
-4. Run the API: `python app.py`
-
-Note: Before running the API, make sure to create a `.env` file with your API keys and other necessary configuration.
-
-# License
---------
-
-Copyright (c) [Year] [Author]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+You can clone the repository and run the API using the following commands:
